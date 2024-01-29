@@ -94,4 +94,18 @@ class PersonDetailView(GenericAPIView):
         else:
             # PersonSerializer serializer errors
             return get_response_schema([], person_serializer.errors, status.HTTP_400_BAD_REQUEST)
+
+    def delete(self, request, *args, **kwargs):
+        """ 
+        Remove person specified by id
+        """
+
+        person_queryset = self.get_queryset()
+
+        if not person_queryset.exists():
+            return get_response_schema([], {}, status.HTTP_404_NOT_FOUND)
+
+        person_queryset.first().delete()
+
+        return get_response_schema([], {}, status.HTTP_204_NO_CONTENT)
 # End Person views
