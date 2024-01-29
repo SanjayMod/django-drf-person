@@ -38,6 +38,9 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
+    # Internal apps of the project
+    'app',
+
     # external python packages
 
     # For Django REST framework
