@@ -45,4 +45,31 @@ class PersonCreateListView(GenericAPIView):
         else:
             # PersonSerializer serializer errors
             return get_response_schema([], serializer.errors, status.HTTP_400_BAD_REQUEST)
+
+
+class PersonDetailView(GenericAPIView):
+
+    serializer_class = PersonSerializer
+
+    def get_queryset(self):
+
+        queryset = Person.objects.filter(
+            id=self.kwargs.get('pk')
+        )
+
+        return queryset
+
+    def get(self, request, *args, **kwargs):
+        """ 
+        Retrieve entry for person with the specified id (still delivered as a single entry inside an array)
+        """
+
+        person_queryset = self.get_queryset()
+
+        if not person_queryset.exists():
+            return get_response_schema([], {}, status.HTTP_404_NOT_FOUND)
+
+        person_serializer = PersonSerializer(person_queryset.first())
+
+        return get_response_schema(person_serializer.data, {}, status.HTTP_200_OK)
 # End Person views
