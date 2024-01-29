@@ -72,4 +72,26 @@ class PersonDetailView(GenericAPIView):
         person_serializer = PersonSerializer(person_queryset.first())
 
         return get_response_schema(person_serializer.data, {}, status.HTTP_200_OK)
+
+    def put(self, request, *args, **kwargs):
+        """ 
+        Update person specified by id
+        """
+
+        person_queryset = self.get_queryset()
+
+        if not person_queryset.exists():
+            return get_response_schema([], {}, status.HTTP_404_NOT_FOUND)
+
+        person_serializer = PersonSerializer(person_queryset.first(), request.data)
+
+        if person_serializer.is_valid():
+
+            person_serializer.save()
+
+            return get_response_schema(person_serializer.data, {}, status.HTTP_200_OK)
+
+        else:
+            # PersonSerializer serializer errors
+            return get_response_schema([], person_serializer.errors, status.HTTP_400_BAD_REQUEST)
 # End Person views
